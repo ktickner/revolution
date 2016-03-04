@@ -11,6 +11,8 @@ gem 'jquery-rails'
 gem 'turbolinks'
 gem 'jbuilder', '~> 2.0'
 gem 'devise', '~> 3.5', '>= 3.5.3'
+gem 'composite_primary_keys', '~> 8.1', '>= 8.1.2'
+gem 'validates_timeliness', '~> 4.0'
 gem 'sdoc', '~> 0.4.0', group: :doc
 
 group :development, :test do
