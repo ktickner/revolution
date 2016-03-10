@@ -35,7 +35,7 @@ class User < ActiveRecord::Base
   has_many :event_logs
   
     #Genre
-  has_many :genres, through: :users_genres
+  has_and_belongs_to_many :genres, :association_foreign_key => "genre_name"
   has_many :genres, :foreign_key => "creator_id"
   
 end

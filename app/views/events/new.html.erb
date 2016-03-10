@@ -1,0 +1,31 @@
+Create new event
+
+<%= form_for(@event) do |f| %>
+  <%= f.label :name %>
+  <%= f.text_field :name %>
+  <%= f.label :description %>
+  <%= f.text_area :description %>
+  <%= f.label :over_eighteen %>
+  <%= f.check_box :over_eighteen %>
+  <%= f.label :private %>
+  <%= f.check_box :private %>
+  <%= f.label :start_datetime %>
+  <%= f.date_field :start_datetime %>
+  <%= f.label :end_datetime %>
+  <%= f.date_field :end_datetime %>
+  
+  <%= f.fields_for :location do |f_location| %>
+        
+    <%= f_location.label :lat %>
+    <%= f_location.text_field :lat %>
+    
+    <%= f_location.label :lng %>
+    <%= f_location.text_field :lng %>
+      
+  <% end %>
+
+  <%= collection_check_boxes(:event, :genre_ids, @genres, :name, :name) %>
+  
+  <%= f.submit "Create Event" %>
+<% end %>
+
