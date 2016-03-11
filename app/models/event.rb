@@ -5,6 +5,9 @@ class Event < ActiveRecord::Base
     belongs_to :location
     accepts_nested_attributes_for :location
     has_and_belongs_to_many :genres, :association_foreign_key => "genre_name"
+    has_many :events_images
+    accepts_nested_attributes_for :events_images
+    has_many :images, through: :events_images
     
     # ActiveRecord validations
     validates :name, presence: true, length: { minimum: 1, maximum: 255 }

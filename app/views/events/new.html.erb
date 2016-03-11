@@ -1,5 +1,17 @@
 Create new event
 
+<% if @event.errors.any? %>
+  <div id="error_explanation">
+    <h2><%= pluralize(@event.errors.count, "error") %> prohibited this article from being saved:</h2>
+ 
+    <ul>
+    <% @event.errors.full_messages.each do |msg| %>
+      <li><%= msg %></li>
+    <% end %>
+    </ul>
+  </div>
+<% end %>
+
 <%= form_for(@event) do |f| %>
   <%= f.label :name %>
   <%= f.text_field :name %>
@@ -14,6 +26,16 @@ Create new event
   <%= f.label :end_datetime %>
   <%= f.date_field :end_datetime %>
   
+  
+  <%= f.fields_for :events_images do |f_image| %>
+    <%= f_image.hidden_field :feature_image, :value => "true" %>
+    
+    <%= f_image.fields_for :image do |image| %>
+      <%= image.label :path %>
+      <%= image.text_field :path %>
+    <% end %>
+  <% end %>
+  
   <%= f.fields_for :location do |f_location| %>
         
     <%= f_location.label :lat %>
@@ -23,8 +45,11 @@ Create new event
     <%= f_location.text_field :lng %>
       
   <% end %>
+  
 
   <%= collection_check_boxes(:event, :genre_ids, @genres, :name, :name) %>
+  
+  
   
   <%= f.submit "Create Event" %>
 <% end %>
