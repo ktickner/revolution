@@ -1,0 +1,25 @@
+// Element Sizing Mixin
+@mixin size($width, $height: $width) {
+      width: $width;
+      height: $height;
+}
+
+// Breakpoint Mixin
+$breakpoints: (
+  'tiny':   ( max-width: 374px ),
+  'small':  ( min-width: 375px ),
+  'medium': ( min-width: 600px ),
+  'large':  ( min-width: 930px ),
+  'custom': ( min-height: 1600px )
+);
+
+@mixin breakpoint($name) {
+  @if map-has-key($breakpoints, $name) {
+    @media only screen and #{inspect(map-get($breakpoints, $name))} {
+      @content;
+    }
+  }
+  @else {
+    @warn "Couldn't find a breakpoint named `#{$name}`.";
+  }
+}

@@ -1,0 +1,75 @@
+/* Styles for elements in the Layout view */
+
+nav{
+    @include size(100%, 3rem);
+    background-color: $black;
+    color: $white;
+    box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+    
+    position: fixed;
+    top: 0;
+    
+    display: flex;
+    align-items: center;
+    
+    &:before{
+        @include size(2.5rem);
+        background-color: $black;
+        box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+        
+        position: fixed;
+        left: 50%;
+        top: 1.5rem;
+        transform: translate(-50%, 0) rotate(45deg);
+        content: '';
+        z-index: -1;
+    }
+    
+    .container{
+        padding: 0 1rem;
+        
+        display: flex;
+        flex-direction: row;
+        justify-content: space-between;
+        
+        ul{
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            
+            li{
+                padding: 0 0.5rem;
+            }
+        }
+        
+        span{
+            display: none;
+        }
+    }
+}
+
+
+footer{
+    @include size(100%, 3rem);
+    background-color: $black;
+    color: $highlight-color;
+    
+    position: fixed;
+    bottom: 0;
+    
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    
+    &:before{
+        @include size(2.5rem);
+        background-color: $black;
+        
+        position: fixed;
+        left: 50%;
+        bottom: 1.5rem;
+        transform: translate(-50%, 0) rotate(45deg);
+        content: '';
+        z-index: -1;
+    }
+}
