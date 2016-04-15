@@ -1,0 +1,33 @@
+<div class="card-padder">
+    <%= content_tag :article, class: "card event", id: "event-#{event.event_id}", 'data-order' => "1", style: "background-image: url(#{event.feature_image_path})" do %>
+        <div class="image-overlay"></div>
+        <div class="info-container">
+            <div class="date small">
+                <span class="year"><%= event.event_start.year %></span>
+                <span class="month"><%= event.event_start.strftime("%d %b") %></span>
+            </div>
+            
+            <div class="front-info">
+                <div class="info-above">
+                    <h2><%= event.event_name %></h2>
+                    <p class="medium">Hosted by <span class="highlight"><%= "#{event.creator_first_name} #{event.creator_last_name}" %></span></p>
+                    <%= over_eighteen_display(event.over_eighteen) %>
+                </div>
+                
+                <div class="info-left">
+                    <p class="medium"><%= "#{event.event_start.to_formatted_s(:long)} to #{event.event_end.to_formatted_s(:long)}" %><p>
+                    <p><%= "#{event.event_lat}, #{event.event_lng}" %></p>
+                </div>
+                
+                <div class="info-right">
+                    <%= genre_display(event.event.genres) %>
+                </div>
+                
+                <div class="info-bottom large">
+                    <p><%= event.event_description %></p>
+                </div>
+            </div>
+            <button class="medium more-information" id="more-<%= event.event_id %>" data-order="1">More Information</button>
+        </div>
+    <% end %>
+</div>

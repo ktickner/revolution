@@ -9,10 +9,11 @@ class Event < ActiveRecord::Base
     accepts_nested_attributes_for :events_images
     has_many :images, through: :events_images
     
+    has_one :feed_event
+    
     # ActiveRecord validations
     validates :name, presence: true, length: { minimum: 1, maximum: 255 }
     validates :description, presence: true, length: { minimum: 1 }
-    validates :over_eighteen, presence: true
     validates :start_datetime, presence: true
     validates_datetime :start_datetime, :after => :now
     validates_datetime :end_datetime, :after => :start_datetime

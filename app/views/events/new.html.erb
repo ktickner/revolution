@@ -1,56 +1,78 @@
-Create new event
-
-<% if @event.errors.any? %>
-  <div id="error_explanation">
-    <h2><%= pluralize(@event.errors.count, "error") %> prohibited this article from being saved:</h2>
- 
-    <ul>
-    <% @event.errors.full_messages.each do |msg| %>
-      <li><%= msg %></li>
-    <% end %>
-    </ul>
-  </div>
-<% end %>
-
-<%= form_for(@event) do |f| %>
-  <%= f.label :name %>
-  <%= f.text_field :name %>
-  <%= f.label :description %>
-  <%= f.text_area :description %>
-  <%= f.label :over_eighteen %>
-  <%= f.check_box :over_eighteen %>
-  <%= f.label :private %>
-  <%= f.check_box :private %>
-  <%= f.label :start_datetime %>
-  <%= f.date_field :start_datetime %>
-  <%= f.label :end_datetime %>
-  <%= f.date_field :end_datetime %>
-  
-  
-  <%= f.fields_for :events_images do |f_image| %>
-    <%= f_image.hidden_field :feature_image, :value => "true" %>
-    
-    <%= f_image.fields_for :image do |image| %>
-      <%= image.label :path %>
-      <%= image.text_field :path %>
-    <% end %>
-  <% end %>
-  
-  <%= f.fields_for :location do |f_location| %>
-        
-    <%= f_location.label :lat %>
-    <%= f_location.text_field :lat %>
-    
-    <%= f_location.label :lng %>
-    <%= f_location.text_field :lng %>
+<div class="container create-event">
+  <div class="card-padder">
+    <div class="card">
+      <h1>Create new event</h1>
       
-  <% end %>
-  
+      <% if @event.errors.any? %>
+        <div id="error_explanation">
+          <h2><%= pluralize(@event.errors.count, "error") %> prohibited this article from being saved:</h2>
+       
+          <ul>
+          <% @event.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+          </ul>
+        </div>
+      <% end %>
+      
+      <%= form_for(@event) do |f| %>
+        <div class="form-container">
+          <%= f.label :name %>
+          <%= f.text_field :name %>
+        </div>
+        
+        <div class="form-container">
+          <%= f.check_box :over_eighteen %>
+          <%= f.label :over_eighteen %>
+          <%= f.check_box :private %>
+          <%= f.label :private %>
+        </div>  
+        
+        <div class="form-container">
+          <%= f.fields_for :events_images do |f_image| %>
+            <%= f_image.hidden_field :feature_image, :value => "true" %>
+            
+            <%= f_image.fields_for :image do |image| %>
+              <%= image.label :path, 'Feature Image' %>
+              <%= image.text_field :path %>
+            <% end %>
+          <% end %>
+        </div>
+        
+        <div class="form-container">
+          <%= f.label :description %>
+          <%= f.text_area :description %>
+        </div>
+        
+        <div class="form-container">
+          <%= f.label :start_datetime %>
+          <%= f.date_field :start_datetime %>
+          <%= f.label :end_datetime %>
+          <%= f.date_field :end_datetime %>
+        </div>
+        
+        <div class="form-container">
+          <%= f.fields_for :location do |f_location| %>
+                
+            <%= f_location.label :lat %>
+            <%= f_location.text_field :lat %>
+            
+            <%= f_location.label :lng %>
+            <%= f_location.text_field :lng %>
+              
+          <% end %>
+        </div>
+        
+        <div class="form-container">
+          <%= collection_check_boxes(:event, :genre_ids, @genres, :name, :name) %>
+        </div>
+        
+        <div>
+          <%= f.submit "Create Event" %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+</div>
 
-  <%= collection_check_boxes(:event, :genre_ids, @genres, :name, :name) %>
-  
-  
-  
-  <%= f.submit "Create Event" %>
-<% end %>
 

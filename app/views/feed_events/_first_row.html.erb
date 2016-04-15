@@ -1,0 +1,10 @@
+<div class="row">
+    
+        <%= render :partial => "feed_events/top_event", :locals => {:event => @events.first} %>
+        
+        <% if @events.second %>
+                <%= render :partial => "feed_events/feed_event", :locals => {:event => @events.second, :event_count => 3} %>
+        <% end %>
+        
+        <%= render "feed_events/ad" %>
+</div>

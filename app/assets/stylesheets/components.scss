@@ -1,0 +1,84 @@
+
+.card-padder{
+    @include size(100%);
+    position: relative;
+    padding: 0.5rem;
+}
+
+.card {
+    @include size(100%);
+    position: relative;
+    padding: 1rem;
+    overflow: hidden;
+    
+    background-position: center;
+    background-size: cover;
+    background-color: $foreground-color;
+    
+    box-shadow: 0 2px 5px #000;
+    
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.horizontal-divider{
+    @include size(100%, 1px);
+    background-color: $black;
+    box-shadow: 0 1px 0 #444;
+}
+
+.vertical-divider{
+    @include size(1px, 100%);
+    background-color: $black;
+    box-shadow: 1px 0 0 #444;
+}
+
+button {
+    position: relative;
+    font-family: $primary-font;
+    letter-spacing: 1px;
+    color: $highlight-color;
+    background-color: rgba(0,0,0,0.1);
+    border: 1px solid $highlight-color;
+    padding: 0.5rem;
+    padding-top: 0.5rem;
+    
+    &:hover {
+        color: $foreground-color;
+        background-color: $highlight-color;
+        cursor: pointer;
+    }
+}
+
+input, textarea{
+    border: 1px solid $highlight-color;
+    background-color: rgba(0,0,0,0.1);
+    padding: 0.5rem;
+    margin-bottom: 0.5rem;
+    color: $white;
+    font-family: $secondary-font;
+    
+    &:active, &:focus{
+        outline: none;
+        box-shadow: 0 0 5px $highlight-color;
+    }
+}
+
+textarea{
+    overflow: auto;
+}
+
+input:not([type=submit]):not([type=file]){
+    
+}
+
+input[type=submit]{
+    color: $highlight-color;
+    cursor: pointer;
+    
+    &:hover{
+        background-color: $highlight-color;
+        color: $background-color;
+    }
+}

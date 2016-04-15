@@ -1,24 +1,51 @@
-Profile information input
-
-<%= form_for(@user_profile) do |f| %>
-    <%= f.label :first_name %>
-    <%= f.text_field :first_name %>
-    
-    <%= f.label :last_name %>
-    <%= f.text_field :last_name %>
-    
-    <%= f.label :birth_date %>
-    <%= f.date_field :birth_date %>
-    
-    <%= f.fields_for :location do |f_location| %>
+<div class="container create-profile">
+    <div class="card-padder">
+        <div class="card">
         
-        <%= f_location.label :lat %>
-        <%= f_location.text_field :lat %>
-        
-        <%= f_location.label :lng %>
-        <%= f_location.text_field :lng %>
-        
-    <% end %>
-
-    <%= f.submit "Update Profile" %>
-<% end %>
+            <h1>Profile information input</h1>
+            
+            <% if @user_profile.errors.any? %>
+                <div id="error_explanation">
+                    <h2><%= pluralize(@user_profile.errors.count, "error") %> prohibited this article from being saved:</h2>
+                
+                    <ul>
+                        <% @user_profile.errors.full_messages.each do |msg| %>
+                            <li><%= msg %></li>
+                        <% end %>
+                    </ul>
+                </div>
+            <% end %>
+            
+            <%= form_for(@user_profile) do |f| %>
+                <div class="form-container">
+                    <%= f.label :first_name %>
+                    <%= f.text_field :first_name %>
+                </div>
+                
+                <div class="form-container">
+                    <%= f.label :last_name %>
+                    <%= f.text_field :last_name %>
+                </div>
+                
+                <div class="form-container">
+                    <%= f.label :birth_date %>
+                    <%= f.date_field :birth_date %>
+                </div>
+                
+                <div class="form-container">
+                    <%= f.fields_for :location do |f_location| %>
+                        
+                        <%= f_location.label :lat %>
+                        <%= f_location.text_field :lat %>
+                        
+                        <%= f_location.label :lng %>
+                        <%= f_location.text_field :lng %>
+                        
+                    <% end %>
+                </div>
+            
+                <%= f.submit "Update Profile" %>
+            <% end %>
+        </div>
+    </div>
+</div>

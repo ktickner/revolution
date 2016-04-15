@@ -1,0 +1,152 @@
+<div class="container feed">
+    <%= render 'feed_events/event_info' %>
+    <%= render 'feed_events/first_row' %>
+    <%= render 'feed_events/events_feed' %>
+</div>
+
+
+<script>
+    
+    //checks window breakpoint
+    function checkSize(){
+        if ($(".card-padder .card.event .medium").css("display") == "none" ){
+            var size = "small";
+        } else if ($(".card-padder .card.event .large").css("display") == "none"){
+            var size = "medium";
+        } else {
+            var size = "large";
+        }
+        return size;
+    }
+    
+    function formatDate(date) {
+        var hours = date.getHours();
+        var minutes = date.getMinutes();
+        var ampm = hours >= 12 ? 'pm' : 'am';
+        hours = hours % 12;
+        hours = hours ? hours : 12; // the hour '0' should be '12'
+        minutes = minutes < 10 ? '0'+minutes : minutes;
+        var strTime = hours + ':' + minutes + ' ' + ampm;//to show time
+        return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " at " + strTime;
+    }
+
+
+    // Rewrites events JS Object to index by event_id
+    var temp_events = <%= raw @events.to_json %>
+    var events = {};
+    
+    $.each(temp_events, function(id,val){
+        events[val.event_id] = val;
+    });
+    
+    /*$('.moreBtn').on('click touch', function() {
+        Normal notation
+    }); */
+    
+    $(document).on('click touch', '.more-information', function() {
+        var template = $("#template").html();
+        var order = $(this).attr('data-order');
+        var id = $(this).attr('id');
+        var breakpoint = checkSize();
+        if (breakpoint == 'large'){
+            
+            console.log(this);
+            
+            $('#current').remove();    
+            var id = $(this).attr('id').split('-')[1];
+            console.log(events[id]);
+            
+            if(order < 4){
+                $('.row').after('<section class="inset card" id="current">' + template + '</section>');
+            } else if(order%3 != 0){
+                var row = Math.floor(order / 3);
+                if ($('.card.event[data-order='+parseInt((row *3)+3)+']').length) {
+                    $('.card.event[data-order='+parseInt((row *3)+3)+']').parent().after('<section class="inset card" id="current">' + template + '</section>');
+                } else if ($('.card.event[data-order='+parseInt((row *3)+2)+']').length) {
+                    $('.card.event[data-order='+parseInt((row *3)+2)+']').parent().after('<section class="inset card" id="current">' + template + '</section>');
+                } else {
+                    $(this).parent().after('<section class="inset card" id="current">' + template + '</section>');
+                }
+            } else {
+                $(this).parent().parent().after('<section class="inset card" id="current">' + template + '</section>');
+            }
+            
+            $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
+            $('#current .event-name').html(events[id].event_name);
+            $('#current .event-host .highlight').html(events[id].creator_first_name + ' ' + events[id].creator_last_name);
+            if(events[id].over_eighteen == false){
+                $('#current .over-eighteen').html("18+");
+            }
+            var d = new Date(events[id].event_start);
+            var e = formatDate(d);
+            $('#current .event-date').html(e);
+            
+            $('#current .event-location').html(events[id].event_lat + ", " + events[id].event_lng);
+            $('#current .description p').html(events[id].event_description);
+            //Need to do event genres
+        } else {
+            console.log(this);
+            
+            $('#current').remove();    
+            var id = $(this).attr('id').split('-')[1];
+            console.log(events[id]);
+            
+            
+            if(order < 4){
+                $('.row').after('<section class="inset card" id="current">' + template + '</section>');
+            } else if(order%2 == 0){
+                $(this).parent().parent().next().after('<section class="inset card" id="current">' + template + '</section>');
+                
+            } else {
+                $(this).parent().parent().after('<section class="inset card" id="current">' + template + '</section>');
+            }
+            
+            $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
+            $('#current .event-name').html(events[id].event_name);
+            $('#current .event-host .highlight').html(events[id].creator_first_name + ' ' + events[id].creator_last_name);
+            if(events[id].over_eighteen == false){
+                $('#current .over-eighteen').html("18+");
+            }
+            var d = new Date(events[id].event_start);
+            var e = formatDate(d);
+            $('#current .event-date').html(e);
+            
+            $('#current .event-location').html(events[id].event_lat + ", " + events[id].event_lng);
+            $('#current .description p').html(events[id].event_description);
+            //Need to do event genres
+        }
+    
+        setTimeout(function() {
+            $('#current').css("max-height", "1000px");
+        },0);
+    });
+    
+    $(document).on('click touch', '.card.event', function() {
+        var template = $("#template").html();
+        var breakpoint = checkSize();
+        if (breakpoint == 'small') {
+            $('#current').remove();    
+            var id = $(this).attr('id').split('-')[1];
+            console.log(events[id]);
+            $(this).parent().after('<section class="inset card" id="current">' + template + '</section>');
+            $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
+            $('#current .event-name').html(events[id].event_name);
+            $('#current .event-host .highlight').html(events[id].creator_first_name + ' ' + events[id].creator_last_name);
+            if(events[id].over_eighteen == false){
+                $('#current .over-eighteen').html("18+");
+            }
+            var d = new Date(events[id].event_start);
+            var e = formatDate(d);
+            $('#current .event-date').html(e);
+            
+            $('#current .event-location').html(events[id].event_lat + ", " + events[id].event_lng);
+            $('#current .description p').html(events[id].event_description);
+            //Need to do event genres
+        }
+    
+        setTimeout(function() {
+            $('#current').css("max-height", "1000px");
+        },0);
+    });
+
+</script>

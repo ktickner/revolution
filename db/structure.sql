@@ -131,6 +131,79 @@ CREATE TABLE events_images (
 
 
 --
+-- Name: images; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE images (
+    id integer NOT NULL,
+    creator_id integer,
+    path character varying(255) NOT NULL,
+    removed boolean DEFAULT false NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    CONSTRAINT images_path_check CHECK ((length((path)::text) > 0))
+);
+
+
+--
+-- Name: locations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE locations (
+    id integer NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    lat numeric(10,8) NOT NULL,
+    lng numeric(11,8) NOT NULL
+);
+
+
+--
+-- Name: user_profiles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE user_profiles (
+    user_id integer NOT NULL,
+    location_id integer,
+    first_name character varying(255) NOT NULL,
+    last_name character varying(255) NOT NULL,
+    birth_date timestamp without time zone NOT NULL,
+    active boolean DEFAULT true NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    CONSTRAINT user_profiles_birth_date_check CHECK ((birth_date > '1900-01-01 00:00:01'::timestamp without time zone)),
+    CONSTRAINT user_profiles_first_name_check CHECK ((length((first_name)::text) > 0)),
+    CONSTRAINT user_profiles_last_name_check CHECK ((length((last_name)::text) > 0))
+);
+
+
+--
+-- Name: feed_events; Type: VIEW; Schema: public; Owner: -
+--
+
+CREATE VIEW feed_events AS
+ SELECT e.id AS event_id,
+    e.name AS event_name,
+    e.creator_id,
+    e.description AS event_description,
+    e.over_eighteen,
+    e.private,
+    e.start_datetime AS event_start,
+    e.end_datetime AS event_end,
+    i.path AS feature_image_path,
+    l.lat AS event_lat,
+    l.lng AS event_lng,
+    up.first_name AS creator_first_name,
+    up.last_name AS creator_last_name
+   FROM ((((events e
+     LEFT JOIN events_images ei ON (((e.id = ei.event_id) AND (ei.feature_image = true))))
+     LEFT JOIN images i ON (((ei.image_id = i.id) AND (i.removed = false))))
+     LEFT JOIN locations l ON ((e.location_id = l.id)))
+     LEFT JOIN user_profiles up ON ((e.creator_id = up.user_id)))
+  WHERE (e.start_datetime > now());
+
+
+--
 -- Name: friend_connections; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -152,21 +225,6 @@ CREATE TABLE genres (
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL,
     CONSTRAINT genres_name_check CHECK ((length((name)::text) > 0))
-);
-
-
---
--- Name: images; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE images (
-    id integer NOT NULL,
-    creator_id integer,
-    path character varying(255) NOT NULL,
-    removed boolean DEFAULT false NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    CONSTRAINT images_path_check CHECK ((length((path)::text) > 0))
 );
 
 
@@ -222,19 +280,6 @@ CREATE SEQUENCE location_components_id_seq
 --
 
 ALTER SEQUENCE location_components_id_seq OWNED BY location_components.id;
-
-
---
--- Name: locations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE locations (
-    id integer NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    lat numeric(10,8) NOT NULL,
-    lng numeric(11,8) NOT NULL
-);
 
 
 --
@@ -308,25 +353,6 @@ CREATE TABLE user_profile_images (
     current_profile_image boolean NOT NULL,
     created_at timestamp without time zone NOT NULL,
     updated_at timestamp without time zone NOT NULL
-);
-
-
---
--- Name: user_profiles; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE user_profiles (
-    user_id integer NOT NULL,
-    location_id integer,
-    first_name character varying(255) NOT NULL,
-    last_name character varying(255) NOT NULL,
-    birth_date timestamp without time zone NOT NULL,
-    active boolean DEFAULT true NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    CONSTRAINT user_profiles_birth_date_check CHECK ((birth_date > '1900-01-01 00:00:01'::timestamp without time zone)),
-    CONSTRAINT user_profiles_first_name_check CHECK ((length((first_name)::text) > 0)),
-    CONSTRAINT user_profiles_last_name_check CHECK ((length((last_name)::text) > 0))
 );
 
 
@@ -767,4 +793,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160302014811');
 INSERT INTO schema_migrations (version) VALUES ('20160302035109');
 
 INSERT INTO schema_migrations (version) VALUES ('20160310043830');
+
+INSERT INTO schema_migrations (version) VALUES ('20160405053346');
 

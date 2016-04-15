@@ -12,6 +12,8 @@ nav{
     display: flex;
     align-items: center;
     
+    z-index: 99;
+    
     &:before{
         @include size(2.5rem);
         background-color: $black;
@@ -32,18 +34,45 @@ nav{
         flex-direction: row;
         justify-content: space-between;
         
+        a{
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            height: 100%;
+        }
+        
+        img{
+            @include size(30px);
+            margin-right: 0.5rem;
+        }
+        
+        >img{
+            margin-left: auto;
+            margin-right: auto;
+        }
+        
         ul{
+            width: 100%;
             display: flex;
             flex-direction: row;
-            justify-content: space-between;
+            justify-content: flex-end;
             
             li{
                 padding: 0 0.5rem;
+                
+                &:first-child{
+                    align-self: flex-start;
+                }
+                
             }
         }
         
         span{
             display: none;
+            
+            @include breakpoint(small){
+                display: inline-block;
+            }
         }
     }
 }
@@ -61,6 +90,8 @@ footer{
     align-items: center;
     justify-content: center;
     
+    z-index: 99;
+    
     &:before{
         @include size(2.5rem);
         background-color: $black;
@@ -71,5 +102,14 @@ footer{
         transform: translate(-50%, 0) rotate(45deg);
         content: '';
         z-index: -1;
+    }
+    
+    .container{
+        position: relative;
+        z-index: 99;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: $secondary-font;
     }
 }

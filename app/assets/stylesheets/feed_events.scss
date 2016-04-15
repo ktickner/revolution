@@ -1,0 +1,483 @@
+.container.feed{
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: row;
+}
+
+.row{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    
+    @include breakpoint(medium){
+        max-height: 450px;
+        
+            
+        .card-padder{
+            order: 2;
+            
+            &:first-child{
+                order: 0;
+            }
+            
+            &:last-child{
+                order: 1;
+            }
+        }
+    }
+    
+    @include breakpoint(large){
+        max-height: 650px;
+    }
+}
+
+.card-padder{
+    padding: 0.5rem 0;
+    
+    .card.event {
+        height: 175px;
+        
+        justify-content: center;
+        
+        .image-overlay {
+            position: absolute;
+            top: 0;
+            right: 0;
+            left: 0;
+            bottom: 0;
+            @include size(100%);
+            
+            background-color: $black;
+            opacity: 0.7;
+        }
+        
+        .info-container {
+            padding: 1rem 0;
+            position: relative;
+            height: 120px;
+            
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            
+            .date {
+                height: 100%;
+                padding-right: 0.5rem;
+                
+                font-family: $primary-font;
+                color: $white;
+                text-align: center;
+                letter-spacing: 2px;
+                
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                
+                white-space: nowrap;
+                
+                .year {
+                    font-size: 2rem;
+                    margin-bottom: 1rem;
+                }
+                
+                .month {
+                    font-size: 1.6rem;
+                    margin-top: 1rem;
+                }
+            }
+            
+            .front-info {
+                height: 100%;
+                
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                
+                h2{
+                    white-space: nowrap;
+                    text-overflow: ellipsis;
+                }
+                p{
+                    margin-top: 0.5rem;
+                }
+            }
+        }
+            
+        .medium {
+            display: none;
+            
+            @include breakpoint(medium) {
+                display: block;
+            }
+        }
+        .large {
+            display: none;
+            
+            @include breakpoint(large) {
+                display: block;
+            }
+        }
+    }
+    
+    @include breakpoint(medium){
+        padding: 0.5rem;
+        width: 50%;
+        
+        .card.event{
+            padding: 0.5rem;
+            justify-content: space-around;
+            
+            .info-container{
+                padding: 0;
+                padding-bottom: 0.5rem;
+            }
+        }
+        
+        &:first-child{
+            .card.event{
+                height: 366px;
+                
+                .info-container {
+                    height: 45%;
+                    padding: 1rem;
+                    position: absolute;
+                    bottom: 0;
+                    left: 0;
+                    right: 0;
+                    
+                    background-color: $foreground-color;
+                    border-top: 1px solid $black;
+                    
+                    flex-direction: column;
+                    align-items: flex-start;
+                    
+                    button{
+                        align-self: center;
+                    }
+                    
+                    .front-info{
+                        justify-content: flex-start;
+                        width: 100%;
+                        
+                        p {
+                            margin-bottom: 0.2rem;
+                        }
+                        
+                        .info-above {
+                            position: absolute;
+                            top: -4.5rem;
+                            left: 0;
+                            width: 100%;
+                            padding: 0 1rem;
+                    
+                            .over-eighteen {
+                                font-family: $primary-font;
+                                font-size: 1.6rem;
+                                color: $highlight-color;
+                                position: absolute;
+                                right: 0;
+                                bottom: 0.6rem;
+                                padding: 0 1rem;
+                            }
+                        }
+                    }
+                }
+            
+                .small {
+                    display: none;
+                }
+            }
+        }
+    }
+    
+    @include breakpoint(large){
+        width: 33.3%;
+        
+        &:first-child{
+            width: 66.7%;
+            
+            .card.event{
+                height: 466px;
+                
+                .info-container{
+                    height: 50%;
+                    
+                    .front-info{
+                        margin-bottom: 1rem;
+                        border-bottom: 1px solid $black;
+                        box-shadow: 0 1px 0 #444;
+                        display: flex;
+                        flex-direction: row;
+                        flex-wrap: wrap;
+                
+                
+                        .info-left {
+                            @include size(60%, 33%);
+                            padding: 1rem;
+                            
+                            border-right: 1px solid $black;
+                            box-shadow: 1px 0 0 #444;
+                            
+                            display: flex;
+                            flex-direction: column;
+                            justify-content: space-around;
+                        }
+                        
+                        .info-right {
+                            @include size(40%, 33%);
+                            
+                            padding: 1rem;
+                            
+                        }
+                        
+                        .info-bottom {
+                            width: 100%;
+                            padding: 1rem;
+                            
+                            border-top: 1px solid $black;
+                            box-shadow: inset 0 1px 0 #444;
+                        }
+                        
+                    }
+                }
+            }
+        }
+    }
+}
+
+#template{
+    display: none;
+}
+
+.inset.card {
+    
+    @include breakpoint(medium){
+        position: relative;
+        right: 0;
+    }
+    
+    padding: 0;
+    
+    .info-container{
+        width: 100%;
+    }
+    
+    .event-head{
+        position: relative;
+        @include size(100%, 200px);
+        
+        border-bottom: 1px solid $black;
+        box-shadow: 0 1px 0 #444;
+    
+        .feature-image{
+            @include size(100%);
+            background: center/contain no-repeat;
+        }
+        
+        .bg-overlay{
+            @include size(100%);
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            
+            background-color: $black;
+            opacity: 0.7;
+        }
+        
+        .general-info{
+            width: 100%;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            padding: 0.5rem;
+            
+            .over-eighteen{
+                position: absolute;
+                right: 1rem;
+                bottom: 1rem;
+                
+                font-family: $primary-font;
+                color: $highlight-color;
+                font-size: 1.6rem;
+            }
+        }
+        
+        @include breakpoint(medium){
+            height: 300px;
+        }
+    }
+    
+    .event-body{
+            padding: 0 0.5rem;
+        
+        .info-left{
+            padding: 0.5rem 1rem;
+            border-bottom: 1px solid $black;
+            box-shadow: 0 1px 0 #444;
+            
+            p{
+                padding: 0.5rem 0;
+            }
+        }
+        
+        .info-right{
+            padding: 1rem;
+            border-bottom: 1px solid $black;
+            box-shadow: 0 1px 0 #444;
+        }
+        
+        .rsvp{
+            padding: 1rem;
+            border-bottom: 1px solid $black;
+            box-shadow: 0 1px 0 #444;
+            
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            
+            button{
+                padding: 0.5rem 1rem;
+            }
+            
+            
+            button ~ button {
+                margin-top: 1rem;
+            }
+            
+            @include breakpoint(medium){
+                flex-direction: row;
+                button ~ button {
+                    margin-left: 1rem;
+                    margin-top: 0;
+                }
+            }
+        }
+        
+        .description{
+            padding: 1rem;
+            border-bottom: 1px solid $black;
+            box-shadow: 0 1px 0 #444;
+        }
+        
+        @include breakpoint(medium){
+            .info-inner{
+                display: flex;
+                
+                flex-direction: row;
+                width: 100%;
+                padding: 0.5rem;
+                border-bottom: 1px solid $black;
+                box-shadow: 0 1px 0 #444;
+            }
+            .info-left{
+                width: 50%;
+                border-right: 1px solid $black;
+                border-bottom: none;
+                box-shadow: 1px 0 0 #444;
+            }
+            
+            .info-right{
+                width: 50%;
+                border-bottom: none;
+                box-shadow: none;
+            }
+            
+            .rsvp{
+                width: 100%;
+            }
+            
+            .description{
+                width: 100%;
+            }
+        }
+    }
+    
+    .event-comments{
+        padding: 0 1rem;
+        
+        .comment-input{
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            border-bottom: 1px solid $black;
+            box-shadow: 0 1px 0 #444;
+            
+            button{
+                padding: 0.5rem 1rem;
+            }
+            
+            textarea{
+                display: none;
+            }
+        }
+        
+        .comment{
+            padding: 1rem;
+            border-bottom: 1px solid $black;
+            box-shadow: 0 1px 0 #444;
+            
+            .comment-head{
+                display: flex;
+                
+                padding-bottom: 1rem;
+                
+                img{
+                    margin-right: 1rem;
+                }
+                
+                h4{
+                    margin-bottom: 0.5rem;
+                }
+                
+                p{
+                    font-size: 0.8rem;
+                    opacity: 0.8;
+                }
+            }
+        }
+    }
+    
+    @include breakpoint(large){
+        .info-container{
+            display: flex;
+            flex-direction: row;
+            
+            .event-info{
+                width: 60%;
+            }
+            
+            .event-comments{
+                width: 40%;
+                border-left: 1px solid $black;
+                box-shadow: inset 1px 0 0 #444;
+                margin-bottom: 0.5rem;
+            }
+            
+            .description{
+                border-bottom: none;
+                box-shadow: none;
+            }
+        }
+    }
+}
+
+.ad.card{
+    height: 175px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    
+    
+    @include breakpoint(large){
+        height: 275px;
+    }
+}
+
+#current{
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 1s;
+}

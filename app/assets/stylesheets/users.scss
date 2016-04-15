@@ -1,0 +1,33 @@
+.container.login, .container.register{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    
+    @include breakpoint(medium){
+        align-items: center;
+    }
+    
+    .card-padder{
+        height: auto;
+    }
+    
+    .card{
+        padding: 1rem;
+    }
+}
+
+.container.create-profile{
+    height: 100%;
+    display: flex;
+    justify-content: center;
+    
+    @include breakpoint(medium){
+        align-items: center;
+    }
+    
+    .form-container{
+        input:not([type=checkbox]), textarea{
+            width: 100%;
+        }
+    }
+}

@@ -1,43 +1,34 @@
 <header>
     <nav>
         <div class="container">
-            <%= link_to root_path do %>
-              <%= image_tag('logo.png') %>
-              <span>Pit List</span>
+          <% if user_signed_in? %>
+              <%= link_to root_path do %>
+                <%= image_tag('icons/logo.png') %>
+                <span>Revolution</span>
+              <% end %>
+              <ul>
+                <li>
+                  <%= link_to root_path do %>
+                    <%= image_tag('icons/events.png') %>
+                    <span>Pit List</span>
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to new_events_path do %>
+                    <%= image_tag('icons/create.png') %>
+                    <span>Create Event</span>
+                  <% end %>
+                </li>
+                <li>
+                  <%= link_to(destroy_user_session_path, :method => :delete) do %>
+                    <%= image_tag('icons/settings.png') %>
+                    <span>Log Out</span>
+                  <% end %>
+                </li>
+              </ul>
+            <% else %>
+              <%= image_tag('icons/logo.png') %>
             <% end %>
-        
-            <ul>
-              <li>
-                <%= link_to '#' do %>
-                  <%= image_tag('create.png') %>
-                  <span>Create Event</span>
-                <% end %>
-              </li>
-              <li>
-                <%= link_to '#' do %>
-                  <%= image_tag('myevents.png') %>
-                  <span>My Events</span>
-                <% end %>
-              </li>
-              <li>
-                <%= link_to '#' do %>
-                  <%= image_tag('messages.png') %>
-                  <span>Messages</span>
-                <% end %>
-              </li>
-              <li>
-                <%= link_to '#' do %>
-                  <%= image_tag('notifications.png') %>
-                  <span>Notifications</span>
-                <% end %>
-              </li>
-              <li>
-                <%= link_to '#' do %>
-                  <%= image_tag('settings.png') %>
-                  <span>Settings</span>
-                <% end %>
-              </li>
-            </ul>
         </div>
     </nav>
 </header>
