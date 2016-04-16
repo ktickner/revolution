@@ -26,12 +26,14 @@
     @include size(100%, 1px);
     background-color: $black;
     box-shadow: 0 1px 0 #444;
+    margin: 0.5rem 0;
 }
 
 .vertical-divider{
     @include size(1px, 100%);
     background-color: $black;
     box-shadow: 1px 0 0 #444;
+    margin: 0 0.5rem;
 }
 
 button {
@@ -80,5 +82,33 @@ input[type=submit]{
     &:hover{
         background-color: $highlight-color;
         color: $background-color;
+    }
+}
+
+.dropdown{
+    position: relative;
+    
+    ul{
+        
+        background-color: $foreground-color;
+        position: absolute;
+        top: 45px;
+        right: 0;
+        box-shadow: 0 2px 5px #000;
+        max-width: 1000px;
+        white-space: nowrap;
+        
+        display: none;
+        overflow: hidden;
+        
+        transition: height 2s;
+        padding: 0.5rem;
+        
+        z-index: 99;
+        
+        li{
+            padding: 0 0.5rem;
+        }
+        
     }
 }

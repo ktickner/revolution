@@ -81,10 +81,12 @@ p, a, li, label, em {
     font-size: 1rem;
     letter-spacing: 2px;
     font-family: $secondary-font;
+    text-decoration: none;
 }
     
 p, li {
     color: $white;
+    margin-bottom: 0,5rem;
 }
 
 a, .highlight, label, em {

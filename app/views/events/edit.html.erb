@@ -1,7 +1,7 @@
 <div class="container create-event">
   <div class="card-padder">
     <div class="card">
-      <h1>Create New Event</h1>
+      <h1>Edit Event</h1>
       
       <% if @event.errors.any? %>
         <div id="error_explanation">
@@ -68,11 +68,9 @@
         </div>
         
         <div>
-          <%= f.submit "Create Event" %>
+          <%= f.submit "Update Event" %>
         </div>
       <% end %>
     </div>
   </div>
 </div>
-
-

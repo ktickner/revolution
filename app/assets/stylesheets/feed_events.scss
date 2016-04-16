@@ -40,6 +40,16 @@
         
         justify-content: center;
         
+        .dropdown{
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            
+            img{
+                height: 30px;
+            }
+        }
+        
         .image-overlay {
             position: absolute;
             top: 0;

@@ -48,11 +48,12 @@
         var order = $(this).attr('data-order');
         var id = $(this).attr('id');
         var breakpoint = checkSize();
+
+        $('#current').remove();
+        
         if (breakpoint == 'large'){
             
             console.log(this);
-            
-            $('#current').remove();    
             var id = $(this).attr('id').split('-')[1];
             console.log(events[id]);
             

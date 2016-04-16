@@ -17,11 +17,28 @@ class UserProfilesController < ApplicationController
         end
     end
     
+    def show 
+       @user_profile = UserProfile.find(params[:id]) 
+    end
+    
+    def edit
+       @user_profile = UserProfile.find(params[:id])
+    end
+    
+    def update
+        @user = UserProfile.find(params[:id])
+        if @user.update_attributes(user_profile_params)
+            redirect_to root
+        else
+          render 'edit'
+        end
+    end
+    
     private
     
         def profile_exists
             unless UserProfile.exists?(user_id: current_user)
-                redirect_to root_url
+                redirect_to new_user_profile_path
             end
         end
         

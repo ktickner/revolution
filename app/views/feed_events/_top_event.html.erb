@@ -1,6 +1,32 @@
 <div class="card-padder">
     <%= content_tag :article, class: "card event", id: "event-#{event.event_id}", 'data-order' => "1", style: "background-image: url(#{event.feature_image_path})" do %>
         <div class="image-overlay"></div>
+        <div class="dropdown">
+            <a href="#">
+                <%= image_tag('icons/menu.png') %>
+            </a>
+            <ul>
+                <li>
+                    <%= link_to '#' do %>
+                        <span>Remove From Feed</span>
+                    <% end %>
+                </li>
+                <% if event.creator_id == current_user.id %>
+                    <div class="horizontal-divider"></div>
+                    <li>
+                        <%= link_to edit_event_path(event.event_id) do %>
+                            <span>Edit Event</span>
+                        <% end %>
+                    </li>
+                    <div class="horizontal-divider"></div>
+                    <li>
+                        <%= link_to '#' do %>
+                            <span>Cancel Event</span>
+                        <% end %>
+                    </li>
+                <% end %>
+            </ul>
+        </div>
         <div class="info-container">
             <div class="date small">
                 <span class="year"><%= event.event_start.year %></span>
