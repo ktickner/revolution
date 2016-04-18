@@ -1,5 +1,6 @@
 class GenresController < ApplicationController
     before_action :authenticate_user!
+    before_action :profile_active?
     
     def new
         @genre = Genre.new

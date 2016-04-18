@@ -2,6 +2,7 @@ class UserProfilesController < ApplicationController
     before_action :authenticate_user!
     before_action :profile_doesnt_exist, only: [:new, :create]
     before_action :profile_exists, only: [:show, :update, :destroy, :edit]
+    before_action :profile_active?, except: [:activate_user, :reactivate_account]
     
     def new
         @user_profile = UserProfile.new
@@ -28,10 +29,28 @@ class UserProfilesController < ApplicationController
     def update
         @user = UserProfile.find(params[:id])
         if @user.update_attributes(user_profile_params)
-            redirect_to root
+            redirect_to root_url
         else
           render 'edit'
         end
+    end
+    
+    def destroy
+       @user = UserProfile.find(params[:id])
+       @user.update(active: false)
+       sign_out current_user
+       redirect_to root_url
+    end
+    
+    def reactivate_account
+       render 'reactivate_account' 
+    end
+    
+    def activate_user
+        #This is the method that sets user activated
+        @user = UserProfile.find(params[:id])
+        @user.update(active: true)
+        redirect_to root_url
     end
     
     private

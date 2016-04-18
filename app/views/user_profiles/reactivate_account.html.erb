@@ -1,0 +1,10 @@
+<div class="container user-profile">
+    <div class="card-padder">
+        <div class="card">
+            
+            <h4>Your account is currently inactive</h4>
+            <%= link_to "Reactivate now", activate_user_path(:id => current_user.id) %>
+            
+        </div>
+    </div>
+</div>

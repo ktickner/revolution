@@ -1,6 +1,7 @@
 class EventsController < ApplicationController
     before_action :authenticate_user!
     before_action :event_creator?, :only => [:edit, :update, :destroy]
+    before_action :profile_active?
     
     def index
         @events = Event.all

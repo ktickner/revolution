@@ -1,4 +1,4 @@
-<div container="card user-profile">
+<div class="container user-profile">
     <div class="card-padder">
         <div class="card">
             
@@ -15,6 +15,9 @@
                     <p><%= genre.name %></p>
                 <% end %>
             </div>
+            
+            <%= link_to "Edit Profile", edit_user_profile_path(current_user) %>
+            <%= link_to "Deactivate Profile", user_profile_path, method: :delete %>
         </div>
     </div>
 </div>
