@@ -20,7 +20,7 @@
                     </li>
                     <div class="horizontal-divider"></div>
                     <li>
-                        <%= link_to '#' do %>
+                        <%= link_to event_path(:id => event.event_id), method: :delete, data: { confirm: "Event cancellations can not be reversed. Are you sure?" } do %>
                             <span>Cancel Event</span>
                         <% end %>
                     </li>

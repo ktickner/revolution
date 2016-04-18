@@ -1,5 +1,6 @@
 class EventsController < ApplicationController
     before_action :authenticate_user!
+    before_action :event_creator?, :only => [:edit, :update, :destroy]
     
     def index
         @events = Event.all
@@ -41,10 +42,19 @@ class EventsController < ApplicationController
         else
           render 'edit'
         end
+    end
     
+    def destroy
+        @event = Event.find(params[:id])
+        @event.update(cancelled: true)
+        redirect_to root_url
     end
     
     private
+    
+        def event_creator?
+           redirect_to(root_url) unless Event.find(params[:id]).creator_id == current_user.id 
+        end
     
         def location_attributes=(attrs)
             self.location = Location.find_or_create_by(lat: attrs[:lat], lng: attrs[:lng])
