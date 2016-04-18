@@ -16,6 +16,12 @@ class EventsController < ApplicationController
     def create
         @genres = Genre.all
         @event = current_user.events.build(event_params)
+        
+        #Needs to set location var by lat/lng attributes
+        #If empty then build event as normal
+        #Else build event with location_id as location.id
+        
+    
         if @event.save
             redirect_to root_url
         else
@@ -40,7 +46,11 @@ class EventsController < ApplicationController
     
     private
     
+        def location_attributes=(attrs)
+            self.location = Location.find_or_create_by(lat: attrs[:lat], lng: attrs[:lng])
+        end
+    
         def event_params
-           params.require(:event).permit(:name, :description, :over_eighteen, :private, :start_datetime, :end_datetime, events_images_attributes: [:feature_image, image_attributes: [:path]], location_attributes: [:lat, :lng], :genre_ids => []) 
+           params.require(:event).permit(:name, :description, :over_eighteen, :private, :start_datetime, :end_datetime, events_images_attributes: [:feature_image, image_attributes: [:path]], location_attributes: [:id, :lat, :lng], :genre_ids => []) 
         end
 end
