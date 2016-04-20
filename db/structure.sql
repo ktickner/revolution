@@ -357,6 +357,19 @@ CREATE TABLE user_profile_images (
 
 
 --
+-- Name: user_removed_events; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE user_removed_events (
+    user_id integer NOT NULL,
+    event_id integer NOT NULL,
+    removed boolean NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
 -- Name: users; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -555,6 +568,14 @@ ALTER TABLE ONLY user_profile_images
 
 ALTER TABLE ONLY user_profiles
     ADD CONSTRAINT user_profiles_pkey PRIMARY KEY (user_id);
+
+
+--
+-- Name: user_removed_events_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY user_removed_events
+    ADD CONSTRAINT user_removed_events_pkey PRIMARY KEY (user_id, event_id);
 
 
 --
@@ -761,6 +782,22 @@ ALTER TABLE ONLY user_profiles
 
 
 --
+-- Name: user_removed_events_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_removed_events
+    ADD CONSTRAINT user_removed_events_event_id_fkey FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: user_removed_events_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_removed_events
+    ADD CONSTRAINT user_removed_events_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT;
+
+
+--
 -- PostgreSQL database dump complete
 --
 
@@ -795,4 +832,6 @@ INSERT INTO schema_migrations (version) VALUES ('20160302035109');
 INSERT INTO schema_migrations (version) VALUES ('20160310043830');
 
 INSERT INTO schema_migrations (version) VALUES ('20160405053346');
+
+INSERT INTO schema_migrations (version) VALUES ('20160420021434');
 

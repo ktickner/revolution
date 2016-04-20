@@ -51,6 +51,17 @@ class EventsController < ApplicationController
         redirect_to root_url
     end
     
+    def remove_from_feed
+        @event = Event.find(params[:id])
+        @event_removal = UserRemovedEvent.where(:user_id => current_user.id, :event_id => @event.id).first_or_initialize do |event_removal|
+           event_removal.user_id = current_user.id
+           event_removal.event_id = @event.id
+           event_removal.removed = true
+        end
+        @event_removal.save
+        redirect_to root_url
+    end
+    
     private
     
         def event_creator?

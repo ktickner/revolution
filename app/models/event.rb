@@ -8,6 +8,7 @@ class Event < ActiveRecord::Base
     has_many :events_images
     accepts_nested_attributes_for :events_images
     has_many :images, through: :events_images
+    has_many :user_removed_events
     
     has_one :feed_event
     

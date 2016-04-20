@@ -8,4 +8,5 @@ Rails.application.routes.draw do
   
   get 'reactivate_account', to: 'user_profiles#reactivate_account', as: :reactivate_account
   get 'activate_user', to: 'user_profiles#activate_user', as: :activate_user
+  get 'remove_event', to: 'events#remove_from_feed', as: :remove_event
 end

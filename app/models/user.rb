@@ -30,6 +30,7 @@ class User < ActiveRecord::Base
   
     # Event
   has_many :events, :foreign_key => "creator_id"
+  has_many :user_removed_events
     
     #EventLog
   has_many :event_logs
