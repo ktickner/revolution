@@ -42,7 +42,7 @@
                 
                 <div class="info-left">
                     <p class="medium"><%= "#{event.event_start.to_formatted_s(:long)} to #{event.event_end.to_formatted_s(:long)}" %><p>
-                    <p><%= "#{event.event_lat}, #{event.event_lng}" %></p>
+                    <p><%= "#{event.event.location_components.where(:component_type => 'formatted_address').first.value}" %></p>
                 </div>
                 
                 <div class="info-right">

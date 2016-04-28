@@ -7,7 +7,7 @@ class CreateGenres < ActiveRecord::Migration
           check (length(name) > 0),
         creator_id int4 REFERENCES users(id) ON DELETE RESTRICT
       );
-      
+       
       CREATE TABLE user_genres(
         user_id int4 REFERENCES users(id) ON DELETE RESTRICT,
         genre_name varchar(50) REFERENCES genres(name) ON DELETE RESTRICT,

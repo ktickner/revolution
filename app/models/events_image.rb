@@ -1,4 +1,5 @@
 class EventsImage < ActiveRecord::Base
+    
     # Model Associations
     belongs_to :event
     belongs_to :image

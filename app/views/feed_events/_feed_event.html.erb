@@ -35,7 +35,7 @@
             
             <div class="front-info">
                 <h2><%= event.event_name %></h2>
-                <p><%= "#{event.event_lat}, #{event.event_lng}" %></p>
+                <p><%= "#{event.event.location_components.where(:component_type => 'formatted_address').first.value}" %></p>
                 <%= genre_display(event.event.genres) %>
             </div>
         </div>

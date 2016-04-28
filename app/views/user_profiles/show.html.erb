@@ -8,7 +8,7 @@
                 <h4>Personal Information</h2>
                 <p>Email: <%= @user_profile.user.email %></p>
                 <p>Birth Date: <%= @user_profile.birth_date.strftime("%B %d, %Y") %></p>
-                <p>Location: <%= "#{@user_profile.location.lat}, #{@user_profile.location.lat}" %>></p>
+                <p>Location: <%= "#{@user_profile.location.location_components.where(:component_type => 'formatted_address').first.value}" %></p>
                 <div class="horizontal-divider"></div>
                 <h4>Interests</h2>
                 <% @user_profile.user.genres.each do |genre| %>

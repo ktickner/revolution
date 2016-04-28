@@ -64,6 +64,18 @@ ALTER SEQUENCE event_logs_id_seq OWNED BY event_logs.id;
 
 
 --
+-- Name: event_responses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE event_responses (
+    response character varying(50) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    CONSTRAINT event_responses_response_check CHECK ((length((response)::text) > 0))
+);
+
+
+--
 -- Name: events; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -126,8 +138,28 @@ CREATE TABLE events_images (
     image_id integer,
     feature_image boolean DEFAULT false NOT NULL,
     created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL
+    updated_at timestamp without time zone NOT NULL,
+    id integer NOT NULL
 );
+
+
+--
+-- Name: events_images_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE events_images_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: events_images_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE events_images_id_seq OWNED BY events_images.id;
 
 
 --
@@ -146,6 +178,22 @@ CREATE TABLE images (
 
 
 --
+-- Name: location_components; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE location_components (
+    id integer NOT NULL,
+    location_id integer,
+    component_type character varying(50) NOT NULL,
+    value character varying(100) NOT NULL,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL,
+    CONSTRAINT location_components_component_type_check CHECK (((length((component_type)::text) > 0) AND (length((component_type)::text) < 51))),
+    CONSTRAINT location_components_value_check CHECK (((length((value)::text) > 0) AND (length((value)::text) < 101)))
+);
+
+
+--
 -- Name: locations; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -155,6 +203,19 @@ CREATE TABLE locations (
     updated_at timestamp without time zone NOT NULL,
     lat numeric(10,8) NOT NULL,
     lng numeric(11,8) NOT NULL
+);
+
+
+--
+-- Name: user_event_responses; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE user_event_responses (
+    user_id integer NOT NULL,
+    event_id integer NOT NULL,
+    response_id character varying(50),
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
 );
 
 
@@ -182,25 +243,48 @@ CREATE TABLE user_profiles (
 --
 
 CREATE VIEW feed_events AS
- SELECT e.id AS event_id,
-    e.name AS event_name,
-    e.creator_id,
-    e.description AS event_description,
-    e.over_eighteen,
-    e.private,
-    e.start_datetime AS event_start,
-    e.end_datetime AS event_end,
-    i.path AS feature_image_path,
-    l.lat AS event_lat,
-    l.lng AS event_lng,
-    up.first_name AS creator_first_name,
-    up.last_name AS creator_last_name
-   FROM ((((events e
-     LEFT JOIN events_images ei ON (((e.id = ei.event_id) AND (ei.feature_image = true))))
-     LEFT JOIN images i ON (((ei.image_id = i.id) AND (i.removed = false))))
-     LEFT JOIN locations l ON ((e.location_id = l.id)))
-     LEFT JOIN user_profiles up ON ((e.creator_id = up.user_id)))
-  WHERE (e.start_datetime > now());
+ SELECT fe.event_id,
+    fe.event_name,
+    fe.creator_id,
+    fe.event_description,
+    fe.over_eighteen,
+    fe.private,
+    fe.event_start,
+    fe.event_end,
+    fe.feature_image_path,
+    fe.event_lat,
+    fe.event_lng,
+    fe.event_address,
+    fe.creator_first_name,
+    fe.creator_last_name,
+    fe.user_response,
+    fe.event_genre
+   FROM ( SELECT DISTINCT ON (e.id) e.id AS event_id,
+            e.name AS event_name,
+            e.creator_id,
+            e.description AS event_description,
+            e.over_eighteen,
+            e.private,
+            e.start_datetime AS event_start,
+            e.end_datetime AS event_end,
+            i.path AS feature_image_path,
+            l.lat AS event_lat,
+            l.lng AS event_lng,
+            lc.value AS event_address,
+            up.first_name AS creator_first_name,
+            up.last_name AS creator_last_name,
+            ur.response_id AS user_response,
+            g.genre_name AS event_genre
+           FROM (((((((events e
+             LEFT JOIN events_images ei ON (((e.id = ei.event_id) AND (ei.feature_image = true))))
+             LEFT JOIN images i ON (((ei.image_id = i.id) AND (i.removed = false))))
+             LEFT JOIN locations l ON ((e.location_id = l.id)))
+             LEFT JOIN location_components lc ON (((lc.location_id = l.id) AND ((lc.component_type)::text = 'formatted_address'::text))))
+             LEFT JOIN user_profiles up ON ((e.creator_id = up.user_id)))
+             LEFT JOIN events_genres g ON ((g.event_id = e.id)))
+             LEFT JOIN user_event_responses ur ON ((ur.event_id = e.id)))
+          WHERE ((e.start_datetime > now()) AND (e.cancelled = false))) fe
+  ORDER BY fe.event_start;
 
 
 --
@@ -245,22 +329,6 @@ CREATE SEQUENCE images_id_seq
 --
 
 ALTER SEQUENCE images_id_seq OWNED BY images.id;
-
-
---
--- Name: location_components; Type: TABLE; Schema: public; Owner: -; Tablespace: 
---
-
-CREATE TABLE location_components (
-    id integer NOT NULL,
-    location_id integer,
-    component_type character varying(50) NOT NULL,
-    value character varying(100) NOT NULL,
-    created_at timestamp without time zone NOT NULL,
-    updated_at timestamp without time zone NOT NULL,
-    CONSTRAINT location_components_component_type_check CHECK (((length((component_type)::text) > 0) AND (length((component_type)::text) < 51))),
-    CONSTRAINT location_components_value_check CHECK (((length((value)::text) > 0) AND (length((value)::text) < 101)))
-);
 
 
 --
@@ -443,6 +511,13 @@ ALTER TABLE ONLY events ALTER COLUMN id SET DEFAULT nextval('events_id_seq'::reg
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY events_images ALTER COLUMN id SET DEFAULT nextval('events_images_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY images ALTER COLUMN id SET DEFAULT nextval('images_id_seq'::regclass);
 
 
@@ -491,6 +566,22 @@ ALTER TABLE ONLY event_logs
 
 
 --
+-- Name: event_responses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY event_responses
+    ADD CONSTRAINT event_responses_pkey PRIMARY KEY (response);
+
+
+--
+-- Name: events_images_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY events_images
+    ADD CONSTRAINT events_images_pkey PRIMARY KEY (id);
+
+
+--
 -- Name: events_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -536,6 +627,14 @@ ALTER TABLE ONLY location_components
 
 ALTER TABLE ONLY locations
     ADD CONSTRAINT locations_pkey PRIMARY KEY (id);
+
+
+--
+-- Name: user_event_responses_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY user_event_responses
+    ADD CONSTRAINT user_event_responses_pkey PRIMARY KEY (user_id, event_id);
 
 
 --
@@ -726,6 +825,30 @@ ALTER TABLE ONLY location_components
 
 
 --
+-- Name: user_event_responses_event_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_event_responses
+    ADD CONSTRAINT user_event_responses_event_id_fkey FOREIGN KEY (event_id) REFERENCES events(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: user_event_responses_response_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_event_responses
+    ADD CONSTRAINT user_event_responses_response_id_fkey FOREIGN KEY (response_id) REFERENCES event_responses(response) ON DELETE RESTRICT;
+
+
+--
+-- Name: user_event_responses_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY user_event_responses
+    ADD CONSTRAINT user_event_responses_user_id_fkey FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE RESTRICT;
+
+
+--
 -- Name: user_genres_genre_name_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -834,4 +957,14 @@ INSERT INTO schema_migrations (version) VALUES ('20160310043830');
 INSERT INTO schema_migrations (version) VALUES ('20160405053346');
 
 INSERT INTO schema_migrations (version) VALUES ('20160420021434');
+
+INSERT INTO schema_migrations (version) VALUES ('20160420043542');
+
+INSERT INTO schema_migrations (version) VALUES ('20160420044852');
+
+INSERT INTO schema_migrations (version) VALUES ('20160421040757');
+
+INSERT INTO schema_migrations (version) VALUES ('20160428004234');
+
+INSERT INTO schema_migrations (version) VALUES ('20160428005751');
 

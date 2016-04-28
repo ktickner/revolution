@@ -13,10 +13,9 @@
 //= require jquery
 //= require jquery_ujs
 //= require turbolinks
-//= require_tree .
+//= require_tree
 
-
-// I need a way to close these when clicked outside of them. Maybe base it off events.
+// Dropdown functionality
 $(document).on('click touch', '.dropdown', function() {
         if($('.dropdown').is(":visible")) {
             $('.dropdown').not(this).children('ul').hide();
@@ -31,4 +30,6 @@ $(document).click(function(event) {
             $('.dropdown').children('ul').hide();
         }
     }        
-})
+});
+    
+    

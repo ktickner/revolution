@@ -25,9 +25,14 @@
                 </div>
                 
                 <div class="rsvp">
-    				<button>Attending</button>
-    				<button>Interested</button>
-    				<button>Not Going</button>
+                    <%= form_tag({controller: "user_event_responses", action: "update"}, method: "post", class: "rsvp-going") do %>
+                    <% end %>
+                    
+                    <%= form_tag({controller: "user_event_responses", action: "update"}, method: "post", class: "rsvp-interested") do %>
+                    <% end %>
+                    
+                    <%= form_tag({controller: "user_event_responses", action: "update"}, method: "post", class: "rsvp-remove") do %>
+                    <% end %>
                 </div>
                 
                 <div class="description">

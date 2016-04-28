@@ -10,7 +10,27 @@ class UserProfilesController < ApplicationController
     end
     
     def create
-        @user_profile = current_user.build_user_profile(user_profile_params)
+        @user_profile = current_user.build_user_profile(user_profile_params.except(:location_attributes, :location_component_attributes))
+        
+        location_attributes = user_profile_params[:location_attributes]
+        lat = location_attributes[:lat].to_d.round(8)
+        lng = location_attributes[:lng].to_d.round(8)
+        
+        # Now I can build the locations by hand
+        if Location.exists?(:lat => lat, :lng => lng)
+            
+            @user_location = Location.find_by(:lat => lat, :lng => lng)
+            @user_profile.location_id = @user_location.id
+        else
+            @user_location = Location.create(:lat => lat, :lng => lng)
+            @user_profile.location_id = @user_location.id
+            
+            user_components = user_profile_params[:location_component_attributes]
+            user_components.each do |component, value|
+               @user_location.location_components.create(:component_type => value[:component_type], :value => value[:value])  
+            end
+        end
+        
         if @user_profile.save
             redirect_to root_url
         else
@@ -28,7 +48,26 @@ class UserProfilesController < ApplicationController
     
     def update
         @user = UserProfile.find(params[:id])
-        if @user.update_attributes(user_profile_params)
+        
+        update_params = user_profile_params.except(:location_attributes, :location_component_attributes)
+        location_attributes = user_profile_params[:location_attributes]
+        lat = location_attributes[:lat].to_d.round(8)
+        lng = location_attributes[:lng].to_d.round(8)
+        
+        if Location.exists?(:lat => lat, :lng => lng)
+            user_location = Location.find_by(:lat => lat, :lng => lng)
+            update_params[:location_id] = user_location.id
+        else
+            user_location = Location.create(:lat => lat, :lng => lng)
+            update_params[:location_id] = user_location.id
+            
+            location_components = user_profile_params[:location_component_attributes]
+            location_components.each do |component, value|
+               user_location.location_components.create(:component_type => value[:component_type], :value => value[:value])  
+            end
+        end
+        
+        if @user.update_attributes(update_params)
             redirect_to root_url
         else
           render 'edit'
@@ -68,6 +107,6 @@ class UserProfilesController < ApplicationController
         end
     
         def user_profile_params
-            params.require(:user_profile).permit(:first_name, :last_name, :birth_date, location_attributes: [:lat, :lng])
+            params.require(:user_profile).permit(:first_name, :last_name, :birth_date, location_attributes: [:id, :lat, :lng], location_component_attributes: [:id, :component_type, :value])
         end
 end

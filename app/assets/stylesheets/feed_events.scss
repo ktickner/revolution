@@ -99,6 +99,8 @@
             
             .front-info {
                 height: 100%;
+                overflow: hidden;
+                text-overflow: ellipsis;
                 
                 display: flex;
                 flex-direction: column;
@@ -348,18 +350,20 @@
             flex-direction: column;
             justify-content: center;
             
-            button{
+            input{
+                font-family: $primary-font;
                 padding: 0.5rem 1rem;
+                margin: 0;
             }
             
             
-            button ~ button {
+            input ~ input {
                 margin-top: 1rem;
             }
             
             @include breakpoint(medium){
                 flex-direction: row;
-                button ~ button {
+                input ~ input {
                     margin-left: 1rem;
                     margin-top: 0;
                 }

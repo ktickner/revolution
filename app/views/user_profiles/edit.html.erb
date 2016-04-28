@@ -33,13 +33,14 @@
                 </div>
                 
                 <div class="form-container">
+                  <%= label_tag(:address, "Address") %>
+                  <%= text_field_tag(:address) %>
+                  <ul id="addressList"></ul>
+                  
                     <%= f.fields_for :location do |f_location| %>
-                        
-                        <%= f_location.label :lat %>
-                        <%= f_location.text_field :lat %>
-                        
-                        <%= f_location.label :lng %>
-                        <%= f_location.text_field :lng %>
+                    
+                        <%= f_location.hidden_field :lat %>
+                        <%= f_location.hidden_field :lng %>
                         
                     <% end %>
                 </div>
@@ -49,3 +50,90 @@
         </div>
     </div>
 </div>
+
+
+
+
+<script>
+  
+  
+// Location functions
+
+var inputTimeout;
+var addressSelected = 0;
+
+
+$('#address').on('input keyDown', function() {
+    clearTimeout(inputTimeout);
+    inputTimeout = setTimeout(function() {checkAddressData('address');},500);
+});
+
+function checkAddressData(aim) {
+    var geocoder = new google.maps.Geocoder(),
+    addressDataTemp = {},
+    map,
+    formattedResult,
+    addressComponents,
+    lat,
+    lng,
+    address =$('#' + aim).val(),
+    appendText = '';
+    addressSelected = 0;
+    
+    if (address != '') {
+        geocoder.geocode({'address': address}, function(results, status) {
+            console.log(status);
+            if(status == 'OK'){
+                $.each(results, function(index,value) {
+                    appendText += '<li class="popUpList" id="item_' + index + '">' + value['formatted_address'] + '</li>';
+                });
+            } else {
+                appendText = '0 Results found, please use a different address';
+                console.log(status);
+            }
+            $('#addressList').html(appendText);
+            $('#addressList').show();
+            $('.popUpList').unbind();
+            $('.popUpList').on('click touch', function() {
+                $('#addressList').hide();
+                addressSelected = 1;
+                var thisItem = $(this).attr('id').split('_')[1];
+                var thisAddress = results[thisItem];
+                console.log(thisAddress);
+                formattedResult = thisAddress['formatted_address'];
+                addressComponents = thisAddress['address_components'];
+                var formElement = '<input type="hidden" name="user_profile[location_component_attributes][0][component_type]" id="user_profile_location_component_attributes_0_component_type" value="formatted_address" />'
+                formElement += '<input type="hidden" name="user_profile[location_component_attributes][0][value]" id="user_profile_location_component_attributes_0_value" value="' + formattedResult + '" />'
+                $('#user_profile_location_attributes_lng').after(formElement);
+                $.each(addressComponents, function(i){
+                    var formElement = '<input type="hidden" name="user_profile[location_component_attributes][' + (i+1) + '][component_type]" id="user_profile_location_component_attributes_' + (i+1) + '_component_type" value="' + this.types[0] + '" />'
+                    formElement += '<input type="hidden" name="user_profile[location_component_attributes][' + (i+1) + '][value]" id="user_profile_location_component_attributes_' + (i+1) + '_value" value="' + this.long_name + '" />'
+                    $('#user_profile_location_attributes_lng').after(formElement);
+                });
+                lat = thisAddress['geometry']['location']['lat'];
+                lng = thisAddress['geometry']['location']['lng'];
+                $('#user_profile_location_attributes_lat').val(lat);
+                $('#user_profile_location_attributes_lng').val(lng);
+                $('#' + aim).val(formattedResult);
+                $('#mapFrame').html('<iframe src="https://maps.google.com/maps?&q=' + formattedResult + '&output=embed"></iframe>');
+            });
+        });
+    } else {
+        $('.popUpList').unbind();
+        $('#addressList').hide();
+    }
+}
+    
+$('#closeButton').on('click touch', function() {
+    $('#modal').hide();
+});
+    
+$('form').submit(function(event) {
+    if (addressSelected != 1){
+        event.preventDefault();
+        $('#error').html('Please select one of the formatted addresses');
+        $('#error').show();
+    }
+});
+  
+</script>

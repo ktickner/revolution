@@ -1,4 +1,6 @@
-<% @events[2..-1].each_with_index do |event, i| %>
-    <% i+=4 %>
-    <%= render :partial => "feed_events/feed_event", :locals => {:event => event, :event_count => i} %>
+<% unless @events.third.nil? %>
+    <% @events[2..-1].each_with_index do |event, i| %>
+        <% i+=4 %>
+        <%= render :partial => "feed_events/feed_event", :locals => {:event => event, :event_count => i} %>
+    <% end %>
 <% end %>

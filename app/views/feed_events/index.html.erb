@@ -1,7 +1,11 @@
 <div class="container feed">
-    <%= render 'feed_events/event_info' %>
-    <%= render 'feed_events/first_row' %>
-    <%= render 'feed_events/events_feed' %>
+    <% if @events.first.nil? %>
+        There are no events to display.
+    <% else %>
+        <%= render 'feed_events/event_info' %>
+        <%= render 'feed_events/first_row' %>
+        <%= render 'feed_events/events_feed' %>
+    <% end %>
 </div>
 
 
@@ -29,6 +33,19 @@
         var strTime = hours + ':' + minutes + ' ' + ampm;//to show time
         return date.getDate() + "/" + date.getMonth() + "/" + date.getFullYear() + " at " + strTime;
     }
+    
+    function createButton(event_id, response, button) {
+        if (button == response){
+            var button_output = '<input type="hidden" value="' + event_id + '" name="response[event_id]" id="response_event_id" />'
+            button_output += '<input type="hidden" value="none" name="response[response_id]" id="response_response_id" />'
+            button_output += '<input type="submit" name="commit" value="' + button + '" class="active" />'
+        } else {
+            var button_output = '<input type="hidden" value="' + event_id + '" name="response[event_id]" id="response_event_id" />'
+            button_output += '<input type="hidden" value="' + button + '" name="response[response_id]" id="response_response_id" />'
+            button_output += '<input type="submit" name="commit" value="' + button + '" />'
+        }
+        return button_output
+    }
 
 
     // Rewrites events JS Object to index by event_id
@@ -48,14 +65,14 @@
         var order = $(this).attr('data-order');
         var id = $(this).attr('id');
         var breakpoint = checkSize();
-
+        $('#current').css('max-height', 0);
         $('#current').remove();
+
         
         if (breakpoint == 'large'){
             
-            console.log(this);
             var id = $(this).attr('id').split('-')[1];
-            console.log(events[id]);
+            console.log(events);
             
             if(order < 4){
                 $('.row').after('<section class="inset card" id="current">' + template + '</section>');
@@ -82,13 +99,16 @@
             var e = formatDate(d);
             $('#current .event-date').html(e);
             
-            $('#current .event-location').html(events[id].event_lat + ", " + events[id].event_lng);
+            $('#current .event-location').html(events[id].event_address);
             $('#current .description p').html(events[id].event_description);
-            //Need to do event genres
+            $('#current .event-genres').html(events[id].event_genre);
+            
+            $('#current .rsvp-going').append(createButton(events[id].event_id, events[id].user_response, "going"));
+            $('#current .rsvp-interested').append(createButton(events[id].event_id, events[id].user_response, "interested"));
+            $('#current .rsvp-remove').append(createButton(events[id].event_id, events[id].user_response, "remove"));
         } else {
             console.log(this);
-            
-            $('#current').remove();    
+                
             var id = $(this).attr('id').split('-')[1];
             console.log(events[id]);
             
@@ -112,7 +132,7 @@
             var e = formatDate(d);
             $('#current .event-date').html(e);
             
-            $('#current .event-location').html(events[id].event_lat + ", " + events[id].event_lng);
+            $('#current .event-location').html(events[id].event_address);
             $('#current .description p').html(events[id].event_description);
             //Need to do event genres
         }

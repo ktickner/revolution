@@ -13,6 +13,6 @@ class ApplicationController < ActionController::Base
     end
     
     def profile_active?
-      redirect_to reactivate_account_url if UserProfile.find_by(user_id: current_user.id).active == false
+      redirect_to reactivate_account_url if UserProfile.exists?(:user_id => current_user.id) && UserProfile.find_by(user_id: current_user.id).active == false
     end
 end

@@ -78,8 +78,9 @@ input:not([type=submit]):not([type=file]){
 input[type=submit]{
     color: $highlight-color;
     cursor: pointer;
+    text-transform: capitalize;
     
-    &:hover{
+    &:hover, &.active{
         background-color: $highlight-color;
         color: $background-color;
     }

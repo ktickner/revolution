@@ -17,11 +17,25 @@ class EventsController < ApplicationController
     
     def create
         @genres = Genre.all
-        @event = current_user.events.build(event_params)
+        @event = current_user.events.build(event_params.except(:location_attributes, :location_component_attributes))
+        location_attributes = event_params[:location_attributes]
+        lat = location_attributes[:lat].to_d.round(8)
+        lng = location_attributes[:lng].to_d.round(8)
         
-        #Needs to set location var by lat/lng attributes
-        #If empty then build event as normal
-        #Else build event with location_id as location.id
+        # Now I can build the locations by hand
+        if Location.exists?(:lat => lat, :lng => lng)
+            
+            @event_location = Location.find_by(:lat => lat, :lng => lng)
+            @event.location_id = @event_location.id
+        else
+            @event_location = Location.create(:lat => lat, :lng => lng)
+            @event.location_id = @event_location.id
+            
+            event_components = event_params[:location_component_attributes]
+            event_components.each do |component, value|
+               @event_location.location_components.create(:component_type => value[:component_type], :value => value[:value])  
+            end
+        end
         
     
         if @event.save
@@ -38,10 +52,28 @@ class EventsController < ApplicationController
     
     def update
         @event = Event.find(params[:id])
-        if @event.update_attributes(event_params)
-            redirect_to root
+        update_params = event_params.except(:location_attributes, :location_component_attributes)
+        location_attributes = event_params[:location_attributes]
+        lat = location_attributes[:lat].to_d.round(8)
+        lng = location_attributes[:lng].to_d.round(8)
+        
+        if Location.exists?(:lat => lat, :lng => lng)
+            event_location = Location.find_by(:lat => lat, :lng => lng)
+            update_params[:location_id] = event_location.id
         else
-          render 'edit'
+            event_location = Location.create(:lat => lat, :lng => lng)
+            update_params[:location_id] = event_location.id
+            
+            location_components = event_params[:location_component_attributes]
+            location_components.each do |component, value|
+               event_location.location_components.create(:component_type => value[:component_type], :value => value[:value])  
+            end
+        end
+        
+        if @event.update_attributes(update_params)
+            redirect_to root_url
+        else
+            render 'edit'
         end
     end
     
@@ -68,11 +100,7 @@ class EventsController < ApplicationController
            redirect_to(root_url) unless Event.find(params[:id]).creator_id == current_user.id 
         end
     
-        def location_attributes=(attrs)
-            self.location = Location.find_or_create_by(lat: attrs[:lat], lng: attrs[:lng])
-        end
-    
         def event_params
-           params.require(:event).permit(:name, :description, :over_eighteen, :private, :start_datetime, :end_datetime, events_images_attributes: [:feature_image, image_attributes: [:path]], location_attributes: [:id, :lat, :lng], :genre_ids => []) 
+           params.require(:event).permit(:id, :name, :description, :over_eighteen, :private, :start_datetime, :end_datetime, events_images_attributes: [:id, :event_id, :image_id, :feature_image, image_attributes: [:id, :path]], location_attributes: [:id, :lat, :lng], location_component_attributes: [:id, :component_type, :value], :genre_ids => []) 
         end
 end
