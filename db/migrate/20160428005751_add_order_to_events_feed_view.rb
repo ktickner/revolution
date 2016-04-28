@@ -15,11 +15,11 @@ class AddOrderToEventsFeedView < ActiveRecord::Migration
         		i.path AS feature_image_path,
         		l.lat AS event_lat,
         		l.lng AS event_lng,
-        		lc.value AS event_address,
         		up.first_name AS creator_first_name,
         		up.last_name AS creator_last_name,
         		ur.response_id AS user_response,
-        		g.genre_name AS event_genre
+        		g.genre_name AS event_genre,
+        		lc.value AS event_address
       	FROM events e
       	LEFT JOIN events_images ei ON e.id = ei.event_id AND ei.feature_image = TRUE
       	LEFT JOIN images i ON ei.image_id = i.id AND i.removed = FALSE
