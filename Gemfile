@@ -4,6 +4,7 @@ source 'https://rubygems.org'
 gem 'rails', '4.2.5'
 gem 'pg', '~>0.18.2'
 gem 'rails_12factor', '0.0.3'
+gem 'puma',           '3.1.0'
 gem 'sass-rails', '~> 5.0'
 gem "autoprefixer-rails"
 gem 'uglifier', '>= 1.3.0'
