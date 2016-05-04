@@ -127,6 +127,12 @@
                 display: block;
             }
         }
+        
+        .tiny {
+            @include breakpoint(small) {
+                display: none;
+            }
+        }
     }
     
     @include breakpoint(medium){

@@ -6,4 +6,4 @@
 #   cities = City.create([{ name: 'Chicago' }, { name: 'Copenhagen' }])
 #   Mayor.create(name: 'Emanuel', city: cities.first)
 #event_responses = EventResponse.create([{ response: 'none' }, { response: 'going' }, { response: 'interested' }, { response: 'removed' }])
-genres = Genre.create([{ name: 'Death Metal', creator_id: 3}, { name: 'Thrash Metal', creator_id: 3}, { name: 'Traditional Metal', creator_id: 3}, { name: 'Black Metal', creator_id: 3}, { name: 'Power Metal', creator_id: 3}, { name: 'Progressive Metal', creator_id: 3}, ])
+genres = Genre.create([{ name: 'Death Metal', creator_id: 1}, { name: 'Thrash Metal', creator_id: 1}, { name: 'Traditional Metal', creator_id: 1}, { name: 'Black Metal', creator_id: 1}, { name: 'Power Metal', creator_id: 1}, { name: 'Progressive Metal', creator_id: 1}, ])
