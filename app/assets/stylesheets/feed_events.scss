@@ -148,6 +148,10 @@
                 padding-bottom: 0.5rem;
             }
         }
+            
+        .small {
+            display: none;
+        }
         
         &:first-child{
             .card.event{
@@ -210,10 +214,6 @@
                             padding: 0 1rem;
                         }
                     }
-                }
-            
-                .small {
-                    display: none;
                 }
             }
         }
