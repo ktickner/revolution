@@ -72,6 +72,7 @@
     function aggregateInfo (events, id) {
         
         console.log('aggregate');
+        console.log(events[id]);
         
         $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
         $('#current .event-name').html(events[id].event_name);
@@ -104,7 +105,16 @@
                 the_comment += '<div class="horizontal-divider"></div>';
                 $('#current .comments').append(the_comment);
             }
-        })
+        });
+        
+        var event_genres = events[id].event_genres;
+        var genres = "<h5>Genres</h5>"
+        $.each(event_genres, function(id){
+            console.log(event_genres[id]);
+            genres += '<p>' + event_genres[id] + '</p>'
+        });
+        
+        $('#current .info-right').append(genres);
         
         
         currentViewed = id;
