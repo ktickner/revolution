@@ -5,6 +5,7 @@ Rails.application.routes.draw do
   resources :user_profiles
   resources :genres
   resources :events
+  resources :comments
   
   post 'event_response', to: 'user_event_responses#update', as: :event_response
   

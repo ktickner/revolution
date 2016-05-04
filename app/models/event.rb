@@ -11,6 +11,7 @@ class Event < ActiveRecord::Base
     accepts_nested_attributes_for :events_images
     has_many :images, through: :events_images
     has_many :user_removed_events
+    has_many :comments
     
     has_one :feed_event
     

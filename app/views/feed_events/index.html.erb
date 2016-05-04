@@ -10,6 +10,7 @@
 
 
 <script>
+    var currentViewed = 0;
     
     //checks window breakpoint
     function checkSize(){
@@ -56,118 +57,171 @@
         events[val.event_id] = val;
     });
     
+    var comments = <%= raw @comments.to_json %>;
+    comments.reverse();
+    
+    console.log(comments);
+    
+    
+    
     /*$('.moreBtn').on('click touch', function() {
         Normal notation
     }); */
     
-    $(document).on('click touch', '.more-information', function() {
-        var template = $("#template").html();
-        var order = $(this).attr('data-order');
-        var id = $(this).attr('id');
-        var breakpoint = checkSize();
-        $('#current').css('max-height', 0);
-        $('#current').remove();
-
+    
+    function aggregateInfo (events, id) {
         
-        if (breakpoint == 'large'){
-            
-            var id = $(this).attr('id').split('-')[1];
-            console.log(events);
-            
-            if(order < 4){
-                $('.row').after('<section class="inset card" id="current">' + template + '</section>');
-            } else if(order%3 != 0){
-                var row = Math.floor(order / 3);
-                if ($('.card.event[data-order='+parseInt((row *3)+3)+']').length) {
-                    $('.card.event[data-order='+parseInt((row *3)+3)+']').parent().after('<section class="inset card" id="current">' + template + '</section>');
-                } else if ($('.card.event[data-order='+parseInt((row *3)+2)+']').length) {
-                    $('.card.event[data-order='+parseInt((row *3)+2)+']').parent().after('<section class="inset card" id="current">' + template + '</section>');
-                } else {
-                    $(this).parent().after('<section class="inset card" id="current">' + template + '</section>');
-                }
+        console.log('aggregate');
+        
+        $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
+        $('#current .event-name').html(events[id].event_name);
+        $('#current .event-host .highlight').html(events[id].creator_first_name + ' ' + events[id].creator_last_name);
+        if(events[id].over_eighteen != false){
+            $('#current .over-eighteen').html("18+");
+        }
+        var d = new Date(events[id].event_start);
+        var e = formatDate(d);
+        $('#current .event-date').html(e);
+        
+        $('#current .event-location').html(events[id].event_address);
+        $('#current .description p').html(events[id].event_description);
+        $('#current .event-genres').html(events[id].event_genre);
+        
+        $('#current #comment_event_id').val(events[id].event_id);
+        
+        $('#current .rsvp-going').append(createButton(events[id].event_id, events[id].user_response, "going"));
+        $('#current .rsvp-interested').append(createButton(events[id].event_id, events[id].user_response, "interested"));
+        $('#current .rsvp-remove').append(createButton(events[id].event_id, events[id].user_response, "remove"));
+        
+        var comment_event_id = events[id].event_id;
+        $.each(comments, function(id){
+            if(comments[id].event == comment_event_id){
+                $('#current #no-comments').remove();
+                var the_comment = '<div class="comment">';
+                the_comment += '<h5>' + comments[id].creator + '</h5>';
+                the_comment += '<p>' + comments[id].comment + '</p>'
+                the_comment += '</div>';
+                the_comment += '<div class="horizontal-divider"></div>';
+                $('#current .comments').append(the_comment);
+            }
+        })
+        
+        
+        currentViewed = id;
+        setTimeout(function() {
+            $('#current').css("max-height","1000px");
+        },0);
+    }
+    
+    
+    function showInfoLarge (thisObject, order, events, id){
+        console.log('showinfo');
+        var template = $("#template").html();
+        if(order < 4){
+            $('.row').after('<section class="inset card" id="current">' + template + '</section>');
+        } else if(order%3 != 0){
+            var row = Math.floor(order / 3);
+            if ($('.card.event[data-order='+parseInt((row *3)+3)+']').length) {
+                $('.card.event[data-order='+parseInt((row *3)+3)+']').parent().after('<section class="inset card" id="current">' + template + '</section>');
+            } else if ($('.card.event[data-order='+parseInt((row *3)+2)+']').length) {
+                $('.card.event[data-order='+parseInt((row *3)+2)+']').parent().after('<section class="inset card" id="current">' + template + '</section>');
             } else {
-                $(this).parent().parent().after('<section class="inset card" id="current">' + template + '</section>');
+                $(thisObject).parent().after('<section class="inset card" id="current">' + template + '</section>');
             }
-            
-            $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
-            $('#current .event-name').html(events[id].event_name);
-            $('#current .event-host .highlight').html(events[id].creator_first_name + ' ' + events[id].creator_last_name);
-            if(events[id].over_eighteen == false){
-                $('#current .over-eighteen').html("18+");
-            }
-            var d = new Date(events[id].event_start);
-            var e = formatDate(d);
-            $('#current .event-date').html(e);
-            
-            $('#current .event-location').html(events[id].event_address);
-            $('#current .description p').html(events[id].event_description);
-            $('#current .event-genres').html(events[id].event_genre);
-            
-            $('#current .rsvp-going').append(createButton(events[id].event_id, events[id].user_response, "going"));
-            $('#current .rsvp-interested').append(createButton(events[id].event_id, events[id].user_response, "interested"));
-            $('#current .rsvp-remove').append(createButton(events[id].event_id, events[id].user_response, "remove"));
         } else {
-            console.log(this);
-                
-            var id = $(this).attr('id').split('-')[1];
-            console.log(events[id]);
+            $(thisObject).parent().parent().after('<section class="inset card" id="current">' + template + '</section>');
+        } 
+        aggregateInfo(events, id);
+    }
+    
+    function showInfoMedium (thisObject, order, events, id) {
+        var template = $("#template").html();
+        if(order < 4){
+            $('.row').after('<section class="inset card" id="current">' + template + '</section>');
+        } else if(order%2 == 0){
+            $(thisObject).parent().parent().next().after('<section class="inset card" id="current">' + template + '</section>');
             
-            
-            if(order < 4){
-                $('.row').after('<section class="inset card" id="current">' + template + '</section>');
-            } else if(order%2 == 0){
-                $(this).parent().parent().next().after('<section class="inset card" id="current">' + template + '</section>');
-                
+        } else {
+            $(thisObject).parent().parent().after('<section class="inset card" id="current">' + template + '</section>');
+        }
+         aggregateInfo(events, id);
+    }
+    
+    function showInfoSmall (thisObject, events, id) {
+        var template = $("#template").html();
+        $(thisObject).parent().after('<section class="inset card" id="current">' + template + '</section>');
+         aggregateInfo(events, id);
+    }
+    
+    
+    
+    
+    
+    
+    $(document).on('click touch', '.more-information', function() {
+        var order = $(this).attr('data-order');
+        var id = $(this).attr('id').split('-')[1];
+        var breakpoint = checkSize();
+        
+        var thisObject = this;
+        if (currentViewed == id) {
+            $('#current').css("max-height","0");
+            currentViewed = 0;
+            setTimeout(function() {
+                    $('#current').remove();
+            },1000);
+        } else {
+            if ($('#current').length > 0) {
+                $('#current').css("max-height","0");
+                setTimeout(function() {
+                    $('#current').remove();
+                    if (breakpoint == 'large'){
+                        showInfoLarge(thisObject, order, events, id);
+                    } else {
+                        showInfoMedium(thisObject, order, events, id);
+                    }
+                },1000);
             } else {
-                $(this).parent().parent().after('<section class="inset card" id="current">' + template + '</section>');
+                if (breakpoint == 'large'){
+                    showInfoLarge(thisObject, order, events, id);
+                } else {
+                    showInfoMedium(thisObject, order, events, id);
+                }
             }
-            
-            $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
-            $('#current .event-name').html(events[id].event_name);
-            $('#current .event-host .highlight').html(events[id].creator_first_name + ' ' + events[id].creator_last_name);
-            if(events[id].over_eighteen == false){
-                $('#current .over-eighteen').html("18+");
-            }
-            var d = new Date(events[id].event_start);
-            var e = formatDate(d);
-            $('#current .event-date').html(e);
-            
-            $('#current .event-location').html(events[id].event_address);
-            $('#current .description p').html(events[id].event_description);
-            //Need to do event genres
         }
     
-        setTimeout(function() {
-            $('#current').css("max-height", "1000px");
-        },0);
     });
     
     $(document).on('click touch', '.card.event', function() {
         var template = $("#template").html();
+        var id = $(this).attr('id').split('-')[1];
         var breakpoint = checkSize();
-        if (breakpoint == 'small') {
-            $('#current').remove();    
-            var id = $(this).attr('id').split('-')[1];
-            console.log(events[id]);
-            $(this).parent().after('<section class="inset card" id="current">' + template + '</section>');
-            $('#current .feature-image').css("background-image", "url("+events[id].feature_image_path+")");
-            $('#current .event-name').html(events[id].event_name);
-            $('#current .event-host .highlight').html(events[id].creator_first_name + ' ' + events[id].creator_last_name);
-            if(events[id].over_eighteen == false){
-                $('#current .over-eighteen').html("18+");
+        console.log('I AM THE SHIT');
+        var thisObject = this;
+        if (breakpoint == 'small'){
+            if (currentViewed == id) {
+                $('#current').css("max-height","0");
+                currentViewed = 0;
+                setTimeout(function() {
+                        $('#current').remove();
+                },1000);
+            } else {
+                if ($('#current').length > 0) {
+                    $('#current').css("max-height","0");
+                    setTimeout(function() {
+                        $('#current').remove();
+                        showInfoSmall(thisObject, events, id);
+                    },1000);
+                } else {
+                    showInfoSmall(thisObject, events, id);
+                }
             }
-            var d = new Date(events[id].event_start);
-            var e = formatDate(d);
-            $('#current .event-date').html(e);
             
-            $('#current .event-location').html(events[id].event_lat + ", " + events[id].event_lng);
-            $('#current .description p').html(events[id].event_description);
-            //Need to do event genres
         }
     
-        setTimeout(function() {
+        /*setTimeout(function() {
             $('#current').css("max-height", "1000px");
-        },0);
+        },0);*/
     });
 
 </script>

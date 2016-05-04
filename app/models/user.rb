@@ -39,4 +39,7 @@ class User < ActiveRecord::Base
   has_and_belongs_to_many :genres, :association_foreign_key => "genre_name"
   has_many :genres, :foreign_key => "creator_id"
   
+    #Comments
+  has_many :comments, :foreign_key => "creator_id"
+  
 end

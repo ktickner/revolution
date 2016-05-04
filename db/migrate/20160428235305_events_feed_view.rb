@@ -1,6 +1,8 @@
-class AddOrderToEventsFeedView < ActiveRecord::Migration
+class EventsFeedView < ActiveRecord::Migration
   def up
     execute <<-SQL
+      DROP VIEW IF EXISTS feed_events;
+    
     	CREATE OR REPLACE VIEW feed_events AS
     	  SELECT * FROM
         	(SELECT DISTINCT ON(e.id)
@@ -18,7 +20,7 @@ class AddOrderToEventsFeedView < ActiveRecord::Migration
         		up.first_name AS creator_first_name,
         		up.last_name AS creator_last_name,
         		ur.response_id AS user_response,
-        		g.genre_name AS event_genre,
+        		ARRAY(SELECT genre_name FROM events_genres WHERE events_genres.event_id = e.id) AS event_genres,
         		lc.value AS event_address
       	FROM events e
       	LEFT JOIN events_images ei ON e.id = ei.event_id AND ei.feature_image = TRUE
@@ -26,8 +28,8 @@ class AddOrderToEventsFeedView < ActiveRecord::Migration
       	LEFT JOIN locations l ON e.location_id = l.id
       	LEFT JOIN location_components lc ON lc.location_id = l.id AND lc.component_type = 'formatted_address'
       	LEFT JOIN user_profiles up ON e.creator_id = up.user_id
-      	LEFT JOIN events_genres g ON g.event_id = e.id
-      	LEFT JOIN user_event_responses ur ON ur.event_id = e.id
+      	LEFT JOIN user_event_responses ur ON e.id = ur.event_id
+      	
       	WHERE e.start_datetime > now() AND e.cancelled = FALSE) AS fe
     	ORDER BY fe.event_start ASC
     SQL

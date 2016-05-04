@@ -43,12 +43,18 @@
         
         <div class="event-comments">
             <div class="comment-input">
-				<button>Write a Comment</button>
-				<textarea id="comment"></textarea>
+                <%= form_for Comment.new, method: :post do |f| %>
+                    <%= f.hidden_field :event_id %>
+                    <%= f.label :comment %>
+                    <%= f.text_area :comment %>
+                    <%= f.submit "Post Comment" %>
+                <% end %>
 			</div>
 			
-			<div class="comment">
-				<p>There are no comments about this event.</p>
+			<div class="horizontal-divider"></div>
+			
+			<div class="comments">
+				<p id="no-comments">There are no comments about this event.</p>
 			</div>
         </div>
     </div>

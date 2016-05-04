@@ -30,6 +30,39 @@ SET default_tablespace = '';
 SET default_with_oids = false;
 
 --
+-- Name: comments; Type: TABLE; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE TABLE comments (
+    id integer NOT NULL,
+    creator_id integer,
+    event_id integer,
+    comment character varying,
+    created_at timestamp without time zone NOT NULL,
+    updated_at timestamp without time zone NOT NULL
+);
+
+
+--
+-- Name: comments_id_seq; Type: SEQUENCE; Schema: public; Owner: -
+--
+
+CREATE SEQUENCE comments_id_seq
+    START WITH 1
+    INCREMENT BY 1
+    NO MINVALUE
+    NO MAXVALUE
+    CACHE 1;
+
+
+--
+-- Name: comments_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
+--
+
+ALTER SEQUENCE comments_id_seq OWNED BY comments.id;
+
+
+--
 -- Name: event_logs; Type: TABLE; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -254,11 +287,11 @@ CREATE VIEW feed_events AS
     fe.feature_image_path,
     fe.event_lat,
     fe.event_lng,
-    fe.event_address,
     fe.creator_first_name,
     fe.creator_last_name,
     fe.user_response,
-    fe.event_genre
+    fe.event_genres,
+    fe.event_address
    FROM ( SELECT DISTINCT ON (e.id) e.id AS event_id,
             e.name AS event_name,
             e.creator_id,
@@ -270,19 +303,20 @@ CREATE VIEW feed_events AS
             i.path AS feature_image_path,
             l.lat AS event_lat,
             l.lng AS event_lng,
-            lc.value AS event_address,
             up.first_name AS creator_first_name,
             up.last_name AS creator_last_name,
             ur.response_id AS user_response,
-            g.genre_name AS event_genre
-           FROM (((((((events e
+            ARRAY( SELECT events_genres.genre_name
+                   FROM events_genres
+                  WHERE (events_genres.event_id = e.id)) AS event_genres,
+            lc.value AS event_address
+           FROM ((((((events e
              LEFT JOIN events_images ei ON (((e.id = ei.event_id) AND (ei.feature_image = true))))
              LEFT JOIN images i ON (((ei.image_id = i.id) AND (i.removed = false))))
              LEFT JOIN locations l ON ((e.location_id = l.id)))
              LEFT JOIN location_components lc ON (((lc.location_id = l.id) AND ((lc.component_type)::text = 'formatted_address'::text))))
              LEFT JOIN user_profiles up ON ((e.creator_id = up.user_id)))
-             LEFT JOIN events_genres g ON ((g.event_id = e.id)))
-             LEFT JOIN user_event_responses ur ON ((ur.event_id = e.id)))
+             LEFT JOIN user_event_responses ur ON ((e.id = ur.event_id)))
           WHERE ((e.start_datetime > now()) AND (e.cancelled = false))) fe
   ORDER BY fe.event_start;
 
@@ -497,6 +531,13 @@ ALTER SEQUENCE users_id_seq OWNED BY users.id;
 -- Name: id; Type: DEFAULT; Schema: public; Owner: -
 --
 
+ALTER TABLE ONLY comments ALTER COLUMN id SET DEFAULT nextval('comments_id_seq'::regclass);
+
+
+--
+-- Name: id; Type: DEFAULT; Schema: public; Owner: -
+--
+
 ALTER TABLE ONLY event_logs ALTER COLUMN id SET DEFAULT nextval('event_logs_id_seq'::regclass);
 
 
@@ -547,6 +588,14 @@ ALTER TABLE ONLY user_logs ALTER COLUMN id SET DEFAULT nextval('user_logs_id_seq
 --
 
 ALTER TABLE ONLY users ALTER COLUMN id SET DEFAULT nextval('users_id_seq'::regclass);
+
+
+--
+-- Name: comments_pkey; Type: CONSTRAINT; Schema: public; Owner: -; Tablespace: 
+--
+
+ALTER TABLE ONLY comments
+    ADD CONSTRAINT comments_pkey PRIMARY KEY (id);
 
 
 --
@@ -686,6 +735,20 @@ ALTER TABLE ONLY users
 
 
 --
+-- Name: index_comments_on_creator_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_comments_on_creator_id ON comments USING btree (creator_id);
+
+
+--
+-- Name: index_comments_on_event_id; Type: INDEX; Schema: public; Owner: -; Tablespace: 
+--
+
+CREATE INDEX index_comments_on_event_id ON comments USING btree (event_id);
+
+
+--
 -- Name: index_locations_on_lat_and_lng; Type: INDEX; Schema: public; Owner: -; Tablespace: 
 --
 
@@ -782,6 +845,22 @@ ALTER TABLE ONLY events_images
 
 ALTER TABLE ONLY events
     ADD CONSTRAINT events_location_id_fkey FOREIGN KEY (location_id) REFERENCES locations(id) ON DELETE RESTRICT;
+
+
+--
+-- Name: fk_rails_4b8a638a8b; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY comments
+    ADD CONSTRAINT fk_rails_4b8a638a8b FOREIGN KEY (creator_id) REFERENCES users(id);
+
+
+--
+-- Name: fk_rails_c6b77e33aa; Type: FK CONSTRAINT; Schema: public; Owner: -
+--
+
+ALTER TABLE ONLY comments
+    ADD CONSTRAINT fk_rails_c6b77e33aa FOREIGN KEY (event_id) REFERENCES events(id);
 
 
 --
@@ -967,4 +1046,8 @@ INSERT INTO schema_migrations (version) VALUES ('20160421040757');
 INSERT INTO schema_migrations (version) VALUES ('20160428004234');
 
 INSERT INTO schema_migrations (version) VALUES ('20160428005751');
+
+INSERT INTO schema_migrations (version) VALUES ('20160428215021');
+
+INSERT INTO schema_migrations (version) VALUES ('20160428235305');
 
